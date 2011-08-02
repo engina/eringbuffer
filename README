@@ -1,0 +1,7 @@
+A portable, C89 compatible, zero-dependency ring buffer implementation.
+
+Just `make`, if all goes well you should see "TEST PASSED".
+
+For testing to work, php should be in your PATH.
+
+<engin@bzzzt.biz>
