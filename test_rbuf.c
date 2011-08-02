@@ -11,7 +11,7 @@ int main(void)
 		perror("fopen");
 		return 1;
 	}
-	FILE* output = fopen("c_output.txt", "w");	
+	FILE* output = fopen("c_output.txt", "wb");	
 	if(!output)
 	{
 		perror("fopen");
@@ -29,7 +29,7 @@ int main(void)
 	char buf[(size_t)(param*1.5f+1)];
 	char rbuf[(size_t)(param*1.5f+1)];
 	ERingBuffer rb;
-	printf("initing rb %zu\n", param);
+	printf("initing rb %d\n", param);
 	e_ringbuffer_init(&rb, rbuf, param);
 	memset(buf, 0, sizeof(buf));
 	while(fscanf(test_cmds, "%c:%d:%s\n", &cmd, &param, buf) != EOF)
