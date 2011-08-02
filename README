@@ -1,4 +1,6 @@
-A portable, C89 compatible, zero-dependency ring buffer implementation.
+A zlib licenced, portable, C89 compatible, zero-dependency ring buffer implementation.
+
+See LICENSE for details.
 
 Just `make`, if all goes well you should see "TEST PASSED".
 
