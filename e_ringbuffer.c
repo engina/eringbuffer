@@ -1,5 +1,5 @@
 /**
- * enda_ringbuffer.c
+ * e_ringbuffer.c
  *
  *  Created on: 12.Tem.2010
  *      Author: Engin
@@ -27,8 +27,8 @@ void e_ringbuffer_init(ERingBuffer* rbuffer, void* buffer, size_t size)
 
 /**
  * @internal
- * @see enda_ringbuffer_peek
- * @see enda_ringbuffer_read
+ * @see e_ringbuffer_peek
+ * @see e_ringbuffer_read
  */
 static size_t rbuf_read(ERingBuffer* rbuffer, void* dst, size_t n, int advance)
 {
@@ -75,10 +75,10 @@ static size_t rbuf_read(ERingBuffer* rbuffer, void* dst, size_t n, int advance)
 }
 
 /**
- * enda_ringbuffer_peek attempts to copy n bytes from the ring buffer to
+ * e_ringbuffer_peek attempts to copy n bytes from the ring buffer to
  * memory pointed by dst.
  *
- * enda_ringbuffer_peek may copy fewer bytes than
+ * e_ringbuffer_peek may copy fewer bytes than
  * n, if there is not sufficient data in the ring buffer.
  *
  * @param rbuffer 	ring buffer object
@@ -92,7 +92,7 @@ size_t e_ringbuffer_peek(ERingBuffer* rbuffer, void* dst, size_t n)
 }
 
 /**
- * enda_ringbuffer_read behaves exactly the same as enda_ringbuffer_peek except that
+ * e_ringbuffer_read behaves exactly the same as e_ringbuffer_peek except that
  * it actually advances the read stream.
  *
  * @param rbuffer 	ring buffer object
@@ -106,7 +106,7 @@ size_t e_ringbuffer_read(ERingBuffer* rbuffer, void* dst, size_t n)
 }
 
 /**
- * enda_ringbuffer_advance attempts to advance the read stream by n bytes
+ * e_ringbuffer_advance attempts to advance the read stream by n bytes
  * without copying any data. However, it may advance less than requested
  * amount, if there is not sufficient data in the buffer. Actual advanced
  * bytes will be returned.
@@ -121,7 +121,7 @@ size_t e_ringbuffer_advance(ERingBuffer* rbuffer, size_t n)
 }
 
 /**
- * enda_ringbuffer_write attempts to write n bytes of data from memory pointed
+ * e_ringbuffer_write attempts to write n bytes of data from memory pointed
  * by data to ring buffer. It may write fewer data than requested if there is
  * not enough space left in the buffer. The actual written bytes will be returned.
  * @param rbuffer	ring buffer object
