@@ -1,4 +1,4 @@
-/* e_ringbuffer.h - a zero dependency, c89 compatible, potable ring buffer implementation
+/* e_ringbuffer.h - a zero dependency, c89 compatible, portable ring buffer implementation
 
   Copyright (C) 2010-2011 Engin AYDOGAN
 
@@ -49,4 +49,4 @@ size_t e_ringbuffer_advance(ERingBuffer* rbuffer, size_t n);
 #define e_ringbuffer_used(rbuf)    ((rbuf)->Used)
 #define e_ringbuffer_free(rbuf)    ((rbuf)->Size - e_ringbuffer_used(rbuf))
 
-#endif /* ENDA_RINGBUFFER_H_ */
+#endif /* E_RINGBUFFER_H_ */
