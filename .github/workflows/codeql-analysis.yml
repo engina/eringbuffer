@@ -38,7 +38,7 @@ jobs:
 
     steps:
     - name: Install cunit
-      run: apt-get install cunit cunit-dev
+      run: sudo apt-get install -y cunit cunit-dev
     - name: Checkout repository
       uses: actions/checkout@v3
     # Initializes the CodeQL tools for scanning.
