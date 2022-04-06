@@ -3,7 +3,7 @@
   Copyright (C) 2010-2011 Engin AYDOGAN
 
   (zlib license)
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -28,21 +28,23 @@
 #include <string.h>
 #include <assert.h>
 
-#define ASSERT_RBUF() \
-    do { \
-        assert(rbuffer->Used <= rbuffer->Size); \
-        assert(rbuffer->ReadStream >= rbuffer->Buffer); \
-        assert(rbuffer->ReadStream <= (rbuffer->Buffer + rbuffer->Size)); \
-        assert(rbuffer->WriteStream >= rbuffer->Buffer); \
+#define ASSERT_RBUF()                                                      \
+    do                                                                     \
+    {                                                                      \
+        assert(rbuffer->Used <= rbuffer->Size);                            \
+        assert(rbuffer->ReadStream >= rbuffer->Buffer);                    \
+        assert(rbuffer->ReadStream <= (rbuffer->Buffer + rbuffer->Size));  \
+        assert(rbuffer->WriteStream >= rbuffer->Buffer);                   \
         assert(rbuffer->WriteStream <= (rbuffer->Buffer + rbuffer->Size)); \
-    } while(0)
+    } while (0)
 
-#define ASSERT_SEGMENTS() \
-    do { \
-        assert(s0 <= rbuffer->Size); \
-        assert(s1 <= rbuffer->Size); \
+#define ASSERT_SEGMENTS()                   \
+    do                                      \
+    {                                       \
+        assert(s0 <= rbuffer->Size);        \
+        assert(s1 <= rbuffer->Size);        \
         assert((s0 + s1) <= rbuffer->Size); \
-    } while(0)
+    } while (0)
 
 /**
  * Initiates a ring buffer.
@@ -50,7 +52,7 @@
  * @param buffer    allocated memory for the underlying buffer
  * @param size      size of the buffer.
  */
-void e_ringbuffer_init(ERingBuffer* rbuffer, void* buffer, size_t size)
+void e_ringbuffer_init(ERingBuffer *rbuffer, void *buffer, size_t size)
 {
     rbuffer->Buffer = rbuffer->ReadStream = rbuffer->WriteStream = buffer;
     rbuffer->Size = size;
@@ -62,46 +64,46 @@ void e_ringbuffer_init(ERingBuffer* rbuffer, void* buffer, size_t size)
  * @see e_ringbuffer_peek
  * @see e_ringbuffer_read
  */
-static size_t rbuf_read(ERingBuffer* rbuffer, void* dst, size_t n, int advance)
+static size_t rbuf_read(ERingBuffer *rbuffer, void *dst, size_t n, int advance)
 {
     size_t s0, s1, r0, r1;
     ASSERT_RBUF();
-    
-    if(!rbuffer->Used)
+
+    if (!rbuffer->Used)
         return 0;
 
-    if(n > rbuffer->Used)
+    if (n > rbuffer->Used || n < 0)
         n = rbuffer->Used;
 
     /* first segment (from beginning to read pointer) */
     s0 = rbuffer->ReadStream - rbuffer->Buffer;
     /* second segment (from read pointer to end) */
     s1 = rbuffer->Size - s0;
-    
+
     ASSERT_SEGMENTS();
-    
+
     /* first read attempt */
     r0 = n <= s1 ? n : s1;
     /* second read attempt */
     r1 = n > s1 ? n - s1 : 0;
 
-    if(dst)
+    if (dst)
     {
-        char* d = dst;
+        char *d = dst;
         memcpy(d, rbuffer->ReadStream, r0);
 
-        if(r1)
+        if (r1)
         {
             d += r0;
             memcpy(d, rbuffer->Buffer, r1);
         }
     }
 
-    if(advance)
+    if (advance)
     {
         rbuffer->Used -= n;
         /* wrapped read or not */
-        if(r1)
+        if (r1)
             rbuffer->ReadStream = rbuffer->Buffer + r1;
         else
             rbuffer->ReadStream += r0;
@@ -119,10 +121,10 @@ static size_t rbuf_read(ERingBuffer* rbuffer, void* dst, size_t n, int advance)
  *
  * @param rbuffer     ring buffer object
  * @param dst        destination memory the data would be copied to
- * @param n            requested data length in bytes
+ * @param n            requested data length in bytes, n < 0 for all available data
  * @return            actual read bytes
  */
-size_t e_ringbuffer_peek(ERingBuffer* rbuffer, void* dst, size_t n)
+size_t e_ringbuffer_peek(ERingBuffer *rbuffer, void *dst, size_t n)
 {
     return rbuf_read(rbuffer, dst, n, 0);
 }
@@ -133,10 +135,10 @@ size_t e_ringbuffer_peek(ERingBuffer* rbuffer, void* dst, size_t n)
  *
  * @param rbuffer     ring buffer object
  * @param dst        destination memory the data would be copied to
- * @param n            requested data length in bytes
+ * @param n            requested data length in bytes, n < 0 for all available data
  * @return            actual read bytes
  */
-size_t e_ringbuffer_read(ERingBuffer* rbuffer, void* dst, size_t n)
+size_t e_ringbuffer_read(ERingBuffer *rbuffer, void *dst, size_t n)
 {
     return rbuf_read(rbuffer, dst, n, 1);
 }
@@ -151,7 +153,7 @@ size_t e_ringbuffer_read(ERingBuffer* rbuffer, void* dst, size_t n)
  * @param n            requested data length to be advanced in bytes
  * @return            actual advanced bytes
  */
-size_t e_ringbuffer_advance(ERingBuffer* rbuffer, size_t n)
+size_t e_ringbuffer_advance(ERingBuffer *rbuffer, size_t n)
 {
     return rbuf_read(rbuffer, NULL, n, 1);
 }
@@ -165,26 +167,26 @@ size_t e_ringbuffer_advance(ERingBuffer* rbuffer, size_t n)
  * @param n            requested amount of bytes to be copied
  * @return            actual written bytes
  */
-size_t e_ringbuffer_write(ERingBuffer* rbuffer, const void* data, size_t n)
+size_t e_ringbuffer_write(ERingBuffer *rbuffer, const void *data, size_t n)
 {
     size_t s0, s1, w0, w1;
     ASSERT_RBUF();
-    
-    if(n > e_ringbuffer_free(rbuffer))
+
+    if (n > e_ringbuffer_free(rbuffer))
         n = e_ringbuffer_free(rbuffer);
 
     s0 = rbuffer->WriteStream - rbuffer->Buffer;
     s1 = rbuffer->Size - s0;
-    
+
     ASSERT_SEGMENTS();
-    
+
     w0 = n <= s1 ? n : s1;
     w1 = n > s1 ? n - s1 : 0;
 
     memcpy(rbuffer->WriteStream, data, w0);
-    if(w1)
+    if (w1)
     {
-        memcpy(rbuffer->Buffer, (char*)data + w0, w1);
+        memcpy(rbuffer->Buffer, (char *)data + w0, w1);
         rbuffer->WriteStream = rbuffer->Buffer + w1;
     }
     else
@@ -192,7 +194,7 @@ size_t e_ringbuffer_write(ERingBuffer* rbuffer, const void* data, size_t n)
         rbuffer->WriteStream += w0;
     }
     rbuffer->Used += n;
-    
+
     ASSERT_RBUF();
     return n;
 }
